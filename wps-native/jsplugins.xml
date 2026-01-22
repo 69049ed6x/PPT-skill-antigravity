@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jsplugins>
+    <jsplugin name="AI样式助手" version="1.0.0" type="wps">
+        <url>http://127.0.0.1:3889/index.html</url>
+    </jsplugin>
+</jsplugins>

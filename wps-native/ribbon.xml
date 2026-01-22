@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="OnAddinLoad">
+  <ribbon startFromScratch="false">
+    <tabs>
+      <tab id="AIStyleTab" label="AI样式助手">
+        <group id="AIStyleGroup" label="智能优化">
+          <!-- 打开样式助手按钮 -->
+          <button 
+            id="btnOpenStyler" 
+            label="打开面板" 
+            size="large"
+            imageMso="TaskPaneInsert"
+            onAction="OnOpenTaskPane"
+            screentip="AI 样式助手"
+            supertip="打开智能助手面板" />
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>

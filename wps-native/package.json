@@ -1,0 +1,23 @@
+{
+    "name": "wps-ai-stylist-native",
+    "version": "1.0.0",
+    "description": "基于智谱 AI 的上下文感知文档样式优化插件 - WPS 原生版本",
+    "main": "index.html",
+    "scripts": {
+        "debug": "wpsjs debug",
+        "publish": "wpsjs publish"
+    },
+    "author": "WPS AI Stylist Team",
+    "license": "MIT",
+    "wps": {
+        "name": "AI样式助手",
+        "version": "1.0.0",
+        "type": "writer",
+        "ribbon": "ribbon.xml",
+        "taskpane": {
+            "url": "index.html",
+            "width": 400,
+            "visible": true
+        }
+    }
+}

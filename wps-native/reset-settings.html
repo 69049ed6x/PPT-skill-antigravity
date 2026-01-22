@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>清除设置并重新配置</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        .success {
+            color: #22863a;
+            background: #dcffe4;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>🔧 WPS AI 插件设置修复工具</h2>
+        <p>此页面可以帮您清除并重新配置插件设置。</p>
+
+        <h3>当前设置：</h3>
+        <div id="current-settings"></div>
+
+        <button onclick="clearSettings()">1. 清除全部设置</button>
+
+        <h3>重新配置：</h3>
+        <label>智谱 AI API Key:</label>
+        <input type="password" id="new-api-key" placeholder="粘贴您的 API Key">
+
+        <label>后端地址:</label>
+        <input type="text" id="new-backend-url" value="http://localhost:8001">
+
+        <button onclick="saveNewSettings()">2. 保存新设置</button>
+
+        <div id="message"></div>
+
+        <hr style="margin: 20px 0;">
+        <p><strong>使用步骤：</strong></p>
+        <ol>
+            <li>先点击"清除全部设置"</li>
+            <li>填写您的 API Key</li>
+            <li>点击"保存新设置"</li>
+            <li>关闭此页面，刷新 WPS 插件</li>
+        </ol>
+    </div>
+
+    <script>
+        // 显示当前设置
+        function showCurrentSettings() {
+            const apiKey = localStorage.getItem('zhipu_api_key');
+            const backendUrl = localStorage.getItem('backend_url');
+
+            let html = '<pre>';
+            html += 'API Key: ' + (apiKey ? '***' + apiKey.slice(-8) : '未设置') + '\n';
+            html += '后端地址: ' + (backendUrl || '未设置');
+            html += '</pre>';
+
+            document.getElementById('current-settings').innerHTML = html;
+        }
+
+        // 清除设置
+        function clearSettings() {
+            localStorage.removeItem('zhipu_api_key');
+            localStorage.removeItem('backend_url');
+
+            document.getElementById('message').innerHTML = '<div class="success">✅ 设置已清除！</div>';
+            showCurrentSettings();
+        }
+
+        // 保存新设置
+        function saveNewSettings() {
+            const apiKey = document.getElementById('new-api-key').value.trim();
+            const backendUrl = document.getElementById('new-backend-url').value.trim();
+
+            if (!apiKey) {
+                alert('请填写 API Key');
+                return;
+            }
+
+            localStorage.setItem('zhipu_api_key', apiKey);
+            localStorage.setItem('backend_url', backendUrl);
+
+            document.getElementById('message').innerHTML = '<div class="success">✅ 新设置已保存！<br>现在可以关闭此页面并刷新 WPS 插件了。</div>';
+            showCurrentSettings();
+        }
+
+        // 页面加载时显示当前设置
+        showCurrentSettings();
+    </script>
+</body>
+
+</html>

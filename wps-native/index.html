@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 样式助手</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="debug-styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- 顶部状态栏 -->
+        <header class="header">
+            <div class="status-bar">
+                <div class="doc-profile">
+                    <span class="status-label">文档风格</span>
+                    <span id="doc-tone" class="status-value">未分析</span>
+                </div>
+                <div class="connection-status">
+                    <span id="connection-indicator" class="indicator offline"></span>
+                    <span id="connection-text">离线</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主聊天区域 -->
+        <main class="chat-container">
+            <!-- 选中文本预览 -->
+            <div id="selection-preview" class="selection-preview" style="display: none;">
+                <div class="preview-header">
+                    <span>📝 当前选中</span>
+                    <button id="clear-selection" class="btn-icon" aria-label="清除">✕</button>
+                </div>
+                <div id="preview-text" class="preview-content"></div>
+            </div>
+
+            <!-- 消息列表 -->
+            <div id="messages-container" class="messages">
+                <div class="welcome-message">
+                    <h3>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"
+                                fill="#1a73e8" />
+                        </svg>
+                        欢迎使用 AI 样式助手
+                    </h3>
+                    <p style="color: #5f6368; margin-bottom: 16px;">智能优化您的文档，让写作更高效</p>
+                    <ul>
+                        <li>✨ 优化文本语气和专业度</li>
+                        <li>🎨 智能应用格式和样式</li>
+                        <li>📊 保持文档风格一致性</li>
+                        <li>🤖 基于上下文的个性化建议</li>
+                    </ul>
+                    <div class="hint">
+                        💡 <strong>快速开始：</strong>选中文本后，输入指令即可体验 AI 优化
+                    </div>
+                </div>
+            </div>
+
+            <!-- 加载指示器 -->
+            <div id="loading-indicator" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <span style="color: #5f6368;">AI 正在思考...</span>
+            </div>
+        </main>
+
+        <!-- 输入区域 -->
+        <footer class="input-container">
+            <textarea id="user-input" class="input-field" placeholder="输入指令，例如：让这段话更正式..." rows="1"
+                style="min-height: 44px; max-height: 120px;"></textarea>
+            <button id="send-button" class="btn-primary" aria-label="发送">
+                <span>发送</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.01 21L23 12L2.01 3L2 10L17 12L2 14L2.01 21Z" fill="currentColor" />
+                </svg>
+            </button>
+        </footer>
+
+        <!-- 底部工具栏：设置按钮 -->
+        <div style="position: fixed; bottom: 16px; right: 16px; z-index: 999;">
+            <button id="open-settings-btn" style="
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.2s;
+            " onclick="toggleSettings()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- 设置弹窗 (Modal Box) -->
+        <div id="settings-modal" class="modal-overlay">
+            <div class="settings-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                        设置
+                    </h3>
+                    <button id="close-settings" class="btn-icon" style="font-size: 20px;">✕</button>
+                </div>
+
+                <div class="form-group">
+                    <label>智谱 AI API Key</label>
+                    <input type="password" id="api-key-input" class="input-field" placeholder="粘贴您的 Key...">
+                </div>
+
+                <div class="form-group">
+                    <label>后端地址</label>
+                    <input type="text" id="backend-url-input" class="input-field" value="http://localhost:8001">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 24px;">
+                    <button id="test-connection" class="btn-secondary" style="flex: 1;">测试连接</button>
+                    <button id="save-settings" class="btn-primary" style="flex: 1.5; border-radius: 12px; width: auto;">
+                        <span style="display: inline;">保存</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast 容器 -->
+        <div id="toast-container" class="toast-container"></div>
+
+        <!-- 调试控制台（开发用，默认隐藏） -->
+        <div id="debug-panel" style="display: none;"></div>
+    </div>
+
+    <script src="wps-integration.js"></script>
+</body>
+
+</html>
