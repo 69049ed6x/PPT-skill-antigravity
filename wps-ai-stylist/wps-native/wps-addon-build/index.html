@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 样式助手 - WPS 插件</title>
+    <link rel="stylesheet" href="../frontend/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部状态栏 -->
+        <header class="header">
+            <div class="status-bar">
+                <div class="doc-profile">
+                    <span class="status-label">文档风格:</span>
+                    <span id="doc-tone" class="status-value">未分析</span>
+                </div>
+                <div class="connection-status">
+                    <span id="connection-indicator" class="indicator offline"></span>
+                    <span id="connection-text">离线</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主聊天区域 -->
+        <main class="chat-container">
+            <!-- 选中文本预览 -->
+            <div id="selection-preview" class="selection-preview" style="display: none;">
+                <div class="preview-header">
+                    <span>📝 当前选中</span>
+                    <button id="clear-selection" class="btn-icon">✕</button>
+                </div>
+                <div id="preview-text" class="preview-content"></div>
+            </div>
+
+            <!-- 消息列表 -->
+            <div id="messages-container" class="messages">
+                <div class="welcome-message">
+                    <h3>👋 欢迎使用 AI 样式助手</h3>
+                    <p>我可以帮助您：</p>
+                    <ul>
+                        <li>优化文本语气和专业度</li>
+                        <li>智能应用格式和样式</li>
+                        <li>保持文档风格一致性</li>
+                    </ul>
+                    <p class="hint">💡 选中文本后，直接输入指令即可开始</p>
+                </div>
+            </div>
+
+            <!-- 加载指示器 -->
+            <div id="loading-indicator" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <span>AI 正在思考...</span>
+            </div>
+        </main>
+
+        <!-- 输入区域 -->
+        <footer class="input-container">
+            <textarea 
+                id="user-input" 
+                class="input-field" 
+                placeholder="输入指令，例如：让这段话更正式并加粗..." 
+                rows="2"
+            ></textarea>
+            <button id="send-button" class="btn-primary">
+                <span>发送</span>
+                <span class="icon">→</span>
+            </button>
+        </footer>
+
+        <!-- 设置面板（可折叠） -->
+        <div id="settings-panel" class="settings-panel collapsed">
+            <div class="settings-header">
+                <h3>⚙️ 设置</h3>
+                <button id="toggle-settings" class="btn-icon">▼</button>
+            </div>
+            <div class="settings-content">
+                <div class="form-group">
+                    <label for="api-key-input">智谱 AI API Key</label>
+                    <input 
+                        type="password" 
+                        id="api-key-input" 
+                        class="input-field" 
+                        placeholder="请输入您的 API Key"
+                    >
+                    <small>密钥将安全存储在本地</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="backend-url-input">后端服务地址</label>
+                    <input 
+                        type="text" 
+                        id="backend-url-input" 
+                        class="input-field" 
+                        value="http://localhost:8000"
+                    >
+                </div>
+
+                <div class="settings-actions">
+                    <button id="save-settings" class="btn-primary">保存设置</button>
+                    <button id="test-connection" class="btn-secondary">测试连接</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="wps-integration.js"></script>
+</body>
+</html>

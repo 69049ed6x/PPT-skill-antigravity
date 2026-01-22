@@ -1,0 +1,8 @@
+{
+  "name": "AI样式助手",
+  "description": "基于智谱 AI 的上下文感知文档样式优化插件",
+  "version": "1.0.0",
+  "author": "WPS AI Stylist Team",
+  "url": "http://localhost:3000/index.html",
+  "type": "taskpane"
+}
