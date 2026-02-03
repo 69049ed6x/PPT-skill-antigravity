@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oh My OpenCode - Open Source AI Agent Orchestration</title>
+    <meta name="description" content="Oh My OpenCode is a batteries-included OpenCode plugin for multi-model orchestration, parallel background agents, and crafted tools." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #111312;
+        --ink-soft: #2d322f;
+        --sand: #f6f1ea;
+        --sand-strong: #efe5d7;
+        --clay: #c9a481;
+        --ember: #d9654d;
+        --leaf: #1a6155;
+        --sky: #b9d4e3;
+        --glass: rgba(255, 255, 255, 0.7);
+        --shadow: 0 28px 60px rgba(20, 24, 22, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: "Space Grotesk", system-ui, sans-serif;
+        background: radial-gradient(circle at top, #fef9f2 0%, #f6f1ea 48%, #ebe1d3 100%);
+        overflow-x: hidden;
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        position: relative;
+        isolation: isolate;
+      }
+
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(0px);
+        opacity: 0.7;
+        animation: float 12s ease-in-out infinite;
+      }
+
+      .orb.orb-one {
+        width: 420px;
+        height: 420px;
+        background: radial-gradient(circle, rgba(217, 101, 77, 0.35), transparent 70%);
+        top: -140px;
+        right: -120px;
+      }
+
+      .orb.orb-two {
+        width: 340px;
+        height: 340px;
+        background: radial-gradient(circle, rgba(26, 97, 85, 0.25), transparent 70%);
+        left: -120px;
+        top: 420px;
+        animation-delay: -4s;
+      }
+
+      .orb.orb-three {
+        width: 260px;
+        height: 260px;
+        background: radial-gradient(circle, rgba(185, 212, 227, 0.5), transparent 70%);
+        right: 12%;
+        top: 1180px;
+        animation-delay: -7s;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translate3d(0, 0, 0);
+        }
+        50% {
+          transform: translate3d(0, -24px, 0);
+        }
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(12px);
+        background: rgba(246, 241, 234, 0.8);
+        border-bottom: 1px solid rgba(17, 19, 18, 0.08);
+      }
+
+      .nav {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        font-family: "Fraunces", serif;
+        font-size: 22px;
+        letter-spacing: 0.02em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .brand-mark {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #1a6155, #d9654d);
+        box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 24px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .cta-button {
+        padding: 12px 22px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: #fff;
+        font-weight: 600;
+        box-shadow: 0 12px 30px rgba(17, 19, 18, 0.25);
+      }
+
+      .hero {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 120px 24px 80px;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 32px;
+        align-items: center;
+      }
+
+      .hero-copy {
+        grid-column: span 7;
+      }
+
+      .hero-title {
+        font-family: "Fraunces", serif;
+        font-size: clamp(40px, 5vw, 68px);
+        line-height: 1.05;
+        margin: 0 0 24px;
+      }
+
+      .hero-subtitle {
+        font-size: 18px;
+        line-height: 1.6;
+        color: var(--ink-soft);
+        max-width: 520px;
+      }
+
+      .hero-actions {
+        margin-top: 28px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .ghost-button {
+        padding: 12px 22px;
+        border-radius: 999px;
+        border: 1px solid rgba(17, 19, 18, 0.2);
+        font-weight: 600;
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .hero-demo {
+        grid-column: span 5;
+        position: relative;
+      }
+
+      .demo-shell {
+        border-radius: 24px;
+        background: linear-gradient(145deg, #ffffff, #efe5d7);
+        padding: 24px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(17, 19, 18, 0.08);
+      }
+
+      .demo-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+
+      .demo-title {
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .demo-pill {
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(26, 97, 85, 0.12);
+        color: var(--leaf);
+        font-size: 12px;
+      }
+
+      .demo-body {
+        display: grid;
+        gap: 14px;
+      }
+
+      .demo-line {
+        height: 14px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(217, 101, 77, 0.4), rgba(26, 97, 85, 0.4));
+        position: relative;
+        overflow: hidden;
+      }
+
+      .demo-line::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+        transform: translateX(-100%);
+        animation: shimmer 2.8s ease-in-out infinite;
+      }
+
+      .demo-card {
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 16px;
+        border: 1px solid rgba(17, 19, 18, 0.08);
+        display: grid;
+        gap: 10px;
+        font-size: 13px;
+        color: var(--ink-soft);
+        animation: pulse 4s ease-in-out infinite;
+      }
+
+      .demo-card strong {
+        color: var(--ink);
+      }
+
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        60% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: translate3d(0, 0, 0);
+        }
+        50% {
+          transform: translate3d(0, -6px, 0);
+        }
+      }
+
+      .section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 72px 24px;
+      }
+
+      .section-title {
+        font-family: "Fraunces", serif;
+        font-size: clamp(28px, 3.6vw, 40px);
+        margin: 0 0 16px;
+      }
+
+      .section-subtitle {
+        color: var(--ink-soft);
+        max-width: 620px;
+        line-height: 1.6;
+      }
+
+      .stats-grid {
+        margin-top: 32px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 24px;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid rgba(17, 19, 18, 0.1);
+        box-shadow: 0 14px 30px rgba(17, 19, 18, 0.08);
+      }
+
+      .stat-card h3 {
+        margin: 0 0 8px;
+        font-size: 28px;
+      }
+
+      .feature-grid {
+        margin-top: 36px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 22px;
+        padding: 24px;
+        border: 1px solid rgba(17, 19, 18, 0.08);
+        box-shadow: 0 16px 30px rgba(17, 19, 18, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 24px 50px rgba(17, 19, 18, 0.16);
+      }
+
+      .feature-card span {
+        display: inline-block;
+        margin-bottom: 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--leaf);
+      }
+
+      .module-band {
+        margin-top: 48px;
+        background: linear-gradient(120deg, rgba(26, 97, 85, 0.12), rgba(217, 101, 77, 0.16));
+        border-radius: 28px;
+        padding: 32px;
+        display: grid;
+        gap: 24px;
+      }
+
+      .module-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+      }
+
+      .module-card {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 18px;
+        padding: 18px;
+        border: 1px solid rgba(17, 19, 18, 0.08);
+        display: grid;
+        gap: 8px;
+      }
+
+      .module-tag {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--ember);
+      }
+
+      .workflow {
+        margin-top: 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+      }
+
+      .workflow-step {
+        padding: 22px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.75);
+        border: 1px solid rgba(17, 19, 18, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .workflow-step::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(26, 97, 85, 0.18), transparent 50%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .workflow-step:hover::before {
+        opacity: 1;
+      }
+
+      .workflow-step h4 {
+        margin: 0 0 10px;
+      }
+
+      .cta-panel {
+        margin-top: 64px;
+        padding: 42px;
+        border-radius: 28px;
+        background: linear-gradient(130deg, #1a6155, #d9654d);
+        color: #fff;
+        display: grid;
+        gap: 18px;
+        box-shadow: 0 28px 60px rgba(26, 97, 85, 0.3);
+      }
+
+      .cta-panel .ghost-button {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #fff;
+      }
+
+      .footer {
+        padding: 40px 24px 60px;
+        text-align: center;
+        color: var(--ink-soft);
+        font-size: 14px;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 900px) {
+        .hero {
+          grid-template-columns: 1fr;
+          padding-top: 90px;
+        }
+
+        .hero-copy,
+        .hero-demo {
+          grid-column: span 1;
+        }
+
+        .nav-links {
+          display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="orb orb-one"></div>
+      <div class="orb orb-two"></div>
+      <div class="orb orb-three"></div>
+
+      <header>
+        <div class="nav">
+          <div class="brand">
+            <span class="brand-mark"></span>
+            Oh My OpenCode
+          </div>
+          <nav class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#modules">Modules</a>
+            <a href="#workflow">Workflow</a>
+            <a href="#community">Community</a>
+          </nav>
+          <a class="cta-button" href="#get-started">Get the plugin</a>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="hero-copy reveal">
+          <p class="demo-pill">OpenCode Plugin</p>
+          <h1 class="hero-title">Orchestrate agents, tools, and models with precision.</h1>
+          <p class="hero-subtitle">
+            Oh My OpenCode is a batteries-included OpenCode plugin for serious builders. Spin up parallel background
+            agents, wire custom tools, and ship faster with a crafted orchestration layer that feels deliberate.
+          </p>
+          <div class="hero-actions">
+            <a class="cta-button" href="#get-started">Install now</a>
+            <a class="ghost-button" href="#features">Explore modules</a>
+          </div>
+        </div>
+        <div class="hero-demo reveal">
+          <div class="demo-shell">
+            <div class="demo-header">
+              <span class="demo-title">Live Orchestration</span>
+              <span class="demo-pill">Multi-model</span>
+            </div>
+            <div class="demo-body">
+              <div class="demo-line"></div>
+              <div class="demo-line" style="width: 82%;"></div>
+              <div class="demo-line" style="width: 68%;"></div>
+              <div class="demo-card">
+                <strong>Background Agents</strong>
+                5 agents running, 2 deep research tasks, 1 reviewer waiting.
+              </div>
+              <div class="demo-card" style="animation-delay: -1.5s;">
+                <strong>Tool Chain</strong>
+                LSP, AST grep, Git, and Web search aligned with your policy.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="reveal">
+          <h2 class="section-title">A landing page with craft, not boilerplate.</h2>
+          <p class="section-subtitle">
+            Inspired by opencode.ai, but tuned for Oh My OpenCode. Modular blocks, ambient motion, and a calm
+            editorial tone that fits serious engineering teams.
+          </p>
+        </div>
+        <div class="stats-grid reveal">
+          <div class="stat-card">
+            <h3>34</h3>
+            <p>Lifecycle hooks with policy-first orchestration.</p>
+          </div>
+          <div class="stat-card">
+            <h3>20+</h3>
+            <p>Built-in tools across LSP, AST, Git, and MCP.</p>
+          </div>
+          <div class="stat-card">
+            <h3>11</h3>
+            <p>Specialized agents with clear operating modes.</p>
+          </div>
+          <div class="stat-card">
+            <h3>Multi-model</h3>
+            <p>Claude, GPT, Gemini, and local models in one flow.</p>
+          </div>
+        </div>
+        <div class="feature-grid reveal">
+          <div class="feature-card">
+            <span>Policy</span>
+            <h3>Precision controls</h3>
+            <p>Define tool boundaries, commit rules, and verification steps once.</p>
+          </div>
+          <div class="feature-card">
+            <span>Speed</span>
+            <h3>Parallel intelligence</h3>
+            <p>Spin up research, review, and debugging agents side by side.</p>
+          </div>
+          <div class="feature-card">
+            <span>Craft</span>
+            <h3>Human-first UX</h3>
+            <p>Readable prompts, thoughtful defaults, and a calm interface.</p>
+          </div>
+          <div class="feature-card">
+            <span>Ops</span>
+            <h3>Team ready</h3>
+            <p>Share agent recipes and converge on a single operating standard.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="modules">
+        <div class="module-band reveal">
+          <div>
+            <h2 class="section-title">Modular by design.</h2>
+            <p class="section-subtitle">
+              Each module is designed to be swapped, extended, or layered without losing cohesion.
+            </p>
+          </div>
+          <div class="module-grid">
+            <div class="module-card">
+              <span class="module-tag">Agents</span>
+              <h3>Hephaestus</h3>
+              <p>Autonomous deep worker tuned for reliability.</p>
+            </div>
+            <div class="module-card">
+              <span class="module-tag">Agents</span>
+              <h3>Atlas</h3>
+              <p>Master orchestrator coordinating complex workflows.</p>
+            </div>
+            <div class="module-card">
+              <span class="module-tag">Skills</span>
+              <h3>Git Master</h3>
+              <p>Atomic commits, clean history, predictable hygiene.</p>
+            </div>
+            <div class="module-card">
+              <span class="module-tag">Tools</span>
+              <h3>LSP + AST</h3>
+              <p>High-signal navigation and safe code transforms.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="workflow">
+        <div class="reveal">
+          <h2 class="section-title">An orchestration workflow that feels alive.</h2>
+          <p class="section-subtitle">
+            The animation modules below mirror real agent behavior: burst research, steady execution, and final
+            verification before shipping.
+          </p>
+        </div>
+        <div class="workflow reveal">
+          <div class="workflow-step">
+            <h4>1. Explore</h4>
+            <p>Spin up contextual search across the repo and external docs.</p>
+          </div>
+          <div class="workflow-step">
+            <h4>2. Plan</h4>
+            <p>Align scope, surface risks, and lock the execution path.</p>
+          </div>
+          <div class="workflow-step">
+            <h4>3. Execute</h4>
+            <p>Run precise edits with verification gates.</p>
+          </div>
+          <div class="workflow-step">
+            <h4>4. Verify</h4>
+            <p>Tests, typecheck, and build prove the change is ready.</p>
+          </div>
+        </div>
+        <div class="cta-panel reveal" id="get-started">
+          <h2 class="section-title">Make OpenCode feel like a power tool again.</h2>
+          <p>Install the plugin, bring your own models, and orchestrate with confidence.</p>
+          <div class="hero-actions">
+            <a class="cta-button" href="https://github.com/code-yeongyu/oh-my-opencode">View repository</a>
+            <a class="ghost-button" href="#community">Join the community</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="community">
+        <div class="reveal">
+          <h2 class="section-title">Community-ready and privacy-first.</h2>
+          <p class="section-subtitle">
+            Keep workflows private, share only what matters, and empower teams to operate with clarity.
+          </p>
+        </div>
+        <div class="feature-grid reveal">
+          <div class="feature-card">
+            <span>Privacy</span>
+            <h3>Local-first by default</h3>
+            <p>Your code stays on your machine unless you choose otherwise.</p>
+          </div>
+          <div class="feature-card">
+            <span>Community</span>
+            <h3>Shared playbooks</h3>
+            <p>Publish your agent recipes and reuse proven workflows.</p>
+          </div>
+          <div class="feature-card">
+            <span>Scale</span>
+            <h3>Enterprise ready</h3>
+            <p>Bring in policy layers without losing speed.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">Built for OpenCode. Crafted for engineers who care about precision.</footer>
+    </div>
+
+    <script>
+      const revealTargets = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        { threshold: 0.18 }
+      );
+
+      revealTargets.forEach((target) => observer.observe(target));
+    </script>
+  </body>
+</html>
